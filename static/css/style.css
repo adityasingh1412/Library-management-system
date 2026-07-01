@@ -1,0 +1,177 @@
+/*
+ * Library Management System - Student Project CSS (Simple Style)
+ */
+
+body {
+    background-color: #f4f6f9;
+    font-family: Arial, sans-serif;
+    color: #333;
+}
+
+/* Simplistic Wrapper Layout */
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+
+/* Sidebar - basic dark gray block */
+#sidebar {
+    min-width: 230px;
+    max-width: 230px;
+    background: #343a40;
+    color: #fff;
+    min-height: 100vh;
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: #212529;
+    text-align: center;
+    border-bottom: 1px solid #4b545c;
+}
+
+#sidebar .sidebar-logo {
+    max-height: 50px;
+    margin-bottom: 10px;
+}
+
+#sidebar ul.components {
+    padding: 15px 0;
+    list-style: none;
+    margin: 0;
+}
+
+#sidebar ul li a {
+    padding: 12px 15px;
+    font-size: 1rem;
+    display: block;
+    color: #c2c7d0;
+    text-decoration: none;
+}
+
+#sidebar ul li a:hover {
+    color: #fff;
+    background: #495057;
+}
+
+#sidebar ul li.active > a {
+    color: #fff;
+    background: #007bff;
+}
+
+#sidebar ul li a i {
+    margin-right: 8px;
+}
+
+/* Content Area - standard white/gray container */
+#content {
+    width: 100%;
+    padding: 20px;
+    background-color: #f4f6f9;
+}
+
+/* Simple Navbar header */
+.navbar-custom {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+}
+
+/* Dashboard Statistic Cards */
+.stat-card {
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: #6c757d;
+}
+
+/* Simple Tables */
+.custom-table-container {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 15px;
+    margin-bottom: 25px;
+}
+
+/* Standard Forms */
+.form-card {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 25px;
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+/* Login Page Styling - Simple centering layout */
+.login-body {
+    background-color: #e9ecef;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    background: #ffffff;
+    width: 100%;
+    max-width: 380px;
+    padding: 25px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.login-logo-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-logo {
+    max-height: 60px;
+}
+
+/* Password Eye Position */
+.password-field-container {
+    position: relative;
+}
+
+.password-toggle-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #6c757d;
+}
+
+/* Profile Panel */
+.profile-card {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+}
+
+/* Responsiveness overrides */
+@media(max-width: 768px) {
+    #sidebar {
+        margin-left: -230px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+}

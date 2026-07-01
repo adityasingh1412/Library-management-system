@@ -1,0 +1,126 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Admin Dashboard</h1>
+</div>
+
+<!-- Metrics Cards - Simple Bootstrap Colored Cards -->
+<div class="row g-3 mb-4">
+    <!-- Total Books -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card bg-primary text-white h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="card-title">Total Books</h6>
+                <h2 class="display-6 fw-bold">{{ stats.total_books }}</h2>
+                <a href="{{ url_for('books') }}" class="text-white small">View Books &rarr;</a>
+            </div>
+        </div>
+    </div>
+    <!-- Available Books -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card bg-success text-white h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="card-title">Available Books</h6>
+                <h2 class="display-6 fw-bold">{{ stats.available_books }}</h2>
+                <span class="small text-white-50">In Stock</span>
+            </div>
+        </div>
+    </div>
+    <!-- Issued Books -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card bg-warning text-dark h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="card-title">Issued Books</h6>
+                <h2 class="display-6 fw-bold">{{ stats.issued_books }}</h2>
+                <a href="{{ url_for('return_books') }}" class="text-dark small">Manage Returns &rarr;</a>
+            </div>
+        </div>
+    </div>
+    <!-- Total Members -->
+    <div class="col-12 col-sm-6 col-md-3">
+        <div class="card bg-info text-white h-100 shadow-sm">
+            <div class="card-body text-center">
+                <h6 class="card-title">Total Members</h6>
+                <h2 class="display-6 fw-bold">{{ stats.total_members }}</h2>
+                <a href="{{ url_for('members') }}" class="text-white small">View Members &rarr;</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Quick Actions List -->
+    <div class="col-12 col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold">
+                ⚡ Quick Actions
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('issue_book') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-arrow-right-circle text-primary me-2"></i> Issue Book
+                </a>
+                <a href="{{ url_for('return_books') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-arrow-left-circle text-info me-2"></i> Return Book
+                </a>
+                <a href="{{ url_for('add_book') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-journal-plus text-success me-2"></i> Add New Book
+                </a>
+                <a href="{{ url_for('add_member') }}" class="list-group-item list-group-item-action">
+                    <i class="bi bi-person-plus text-secondary me-2"></i> Register Member
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions Table -->
+    <div class="col-12 col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+                <span>📋 Recent Activities</span>
+                <a href="{{ url_for('return_books') }}" class="btn btn-sm btn-outline-light py-0 px-2">History</a>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover mb-0 text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Member Name</th>
+                                <th>Book Title</th>
+                                <th>Issue Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if transactions %}
+                                {% for txn in transactions %}
+                                <tr>
+                                    <td>{{ txn.member_name }}</td>
+                                    <td>{{ txn.book_title }}</td>
+                                    <td>{{ txn.issue_date }}</td>
+                                    <td>
+                                        {% if txn.status == 'Issued' %}
+                                        <span class="badge bg-warning text-dark">Issued</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Returned</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-4 text-muted">
+                                    No transaction logs found.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

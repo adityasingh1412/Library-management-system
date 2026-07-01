@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+{% block title %}Issue Book - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 text-dark font-weight-bold">Issue Book</h1>
+    <a href="{{ url_for('books') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Catalog</a>
+</div>
+
+<div class="form-card mb-5">
+    <div class="text-center mb-4">
+        <i class="bi bi-arrow-right-circle text-primary fs-1"></i>
+        <h4 class="mt-2 font-weight-bold">Create Borrow Transaction</h4>
+        <p class="text-muted small">Select a member and a book to register the transaction</p>
+    </div>
+
+    <form action="{{ url_for('issue_book') }}" method="POST" class="needs-validation" novalidate>
+        <!-- Select Book -->
+        <div class="mb-3">
+            <label for="book_id" class="form-label fw-semibold">Select Book</label>
+            <select class="form-select" id="book_id" name="book_id" required>
+                <option value="">-- Choose a Book --</option>
+                {% for bk in available_books %}
+                <option value="{{ bk.id }}" {% if preselected_book_id|string == bk.id|string %}selected{% endif %}>
+                    {{ bk.title }} (by {{ bk.author }}) — {{ bk.available }} copies left
+                </option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please select a book.</div>
+            {% if not available_books %}
+            <div class="form-text text-danger mt-1">No books are currently in stock and available for borrow.</div>
+            {% endif %}
+        </div>
+
+        <!-- Select Member -->
+        <div class="mb-3">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="member_id" class="form-label fw-semibold mb-0">Select Library Member</label>
+                <a href="{{ url_for('add_member') }}" class="text-decoration-none small"><i class="bi bi-plus-circle"></i> Add New Member</a>
+            </div>
+            <select class="form-select" id="member_id" name="member_id" required>
+                <option value="">-- Choose a Member --</option>
+                {% for mb in members %}
+                <option value="{{ mb.id }}">{{ mb.name }} (Email: {{ mb.email or 'N/A' }})</option>
+                {% endfor %}
+            </select>
+            <div class="invalid-feedback">Please select a registered library member.</div>
+            {% if not members %}
+            <div class="form-text text-danger mt-1">No members registered yet. Please click the link above to register a member first.</div>
+            {% endif %}
+        </div>
+
+        <div class="row g-3 mb-4">
+            <!-- Issue Date -->
+            <div class="col-12 col-sm-6">
+                <label for="issue_date" class="form-label fw-semibold">Issue Date</label>
+                <input type="date" class="form-control" id="issue_date" name="issue_date" value="{{ today_date }}" required>
+                <div class="invalid-feedback">Please select issue date.</div>
+            </div>
+            <!-- Due Date -->
+            <div class="col-12 col-sm-6">
+                <label for="due_date" class="form-label fw-semibold">Due Date</label>
+                <input type="date" class="form-control" id="due_date" name="due_date" required>
+                <div class="invalid-feedback">Please select due date.</div>
+                <div class="form-text text-muted">Automatically set to 14 days after issue date.</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-primary-custom w-100 py-2.5" {% if not available_books or not members %}disabled{% endif %}>
+                <i class="bi bi-check-circle me-1"></i> Confirm Issue
+            </button>
+            <a href="{{ url_for('books') }}" class="btn btn-light border w-100 py-2.5">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Enable Bootstrap Form Validation
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}

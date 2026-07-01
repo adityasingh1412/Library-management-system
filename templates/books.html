@@ -1,0 +1,140 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage Books - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 text-dark font-weight-bold">Book Catalog</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary btn-primary-custom shadow-sm">
+            <i class="bi bi-journal-plus me-1"></i> Add New Book
+        </a>
+    </div>
+</div>
+
+<!-- Search and Filter Bar -->
+<div class="custom-table-container mb-4">
+    <form method="GET" action="{{ url_for('books') }}" class="row g-3">
+        <!-- Search Keyword -->
+        <div class="col-12 col-md-4">
+            <label for="search" class="form-label small text-muted">Search Keyword</label>
+            <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="search" name="search" placeholder="Search by title, ISBN, publisher..." value="{{ search_query or '' }}">
+            </div>
+        </div>
+
+        <!-- Filter by Author -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <label for="author" class="form-label small text-muted">Filter by Author</label>
+            <select class="form-select" id="author" name="author">
+                <option value="">All Authors</option>
+                {% for auth in authors %}
+                <option value="{{ auth }}" {% if selected_author == auth %}selected{% endif %}>{{ auth }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Filter by Category -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <label for="category" class="form-label small text-muted">Filter by Category</label>
+            <select class="form-select" id="category" name="category">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat }}" {% if selected_category == cat %}selected{% endif %}>{{ cat }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Submit & Clear Buttons -->
+        <div class="col-12 col-md-2 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary btn-primary-custom w-100"><i class="bi bi-funnel"></i> Filter</button>
+            <a href="{{ url_for('books') }}" class="btn btn-outline-secondary w-100"><i class="bi bi-x-circle"></i> Clear</a>
+        </div>
+    </form>
+</div>
+
+<!-- Books Catalog Table -->
+<div class="custom-table-container">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Book ID</th>
+                    <th>Book Details</th>
+                    <th>Category</th>
+                    <th>ISBN / Publisher</th>
+                    <th class="text-center" style="width: 100px;">Copies</th>
+                    <th class="text-center" style="width: 150px;">Status</th>
+                    <th class="text-end" style="width: 200px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if books %}
+                    {% for book in books %}
+                    <tr>
+                        <td class="text-muted fw-semibold">#{{ book.id }}</td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold text-dark fs-6">{{ book.title }}</span>
+                                <span class="text-muted small">by {{ book.author }}</span>
+                            </div>
+                        </td>
+                        <td><span class="badge bg-light text-dark border px-2 py-1.5">{{ book.category }}</span></td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-semibold text-dark small">ISBN: {{ book.isbn }}</span>
+                                <span class="text-muted small">Pub: {{ book.publisher or '-' }}</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold text-dark">{{ book.available }}</span>
+                                <span class="text-muted small">of {{ book.quantity }} total</span>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            {% if book.available > 0 %}
+                            <span class="badge bg-success py-2 px-3 rounded-pill"><i class="bi bi-check-circle-fill me-1"></i> Available</span>
+                            {% else %}
+                            <span class="badge bg-danger py-2 px-3 rounded-pill"><i class="bi bi-x-circle-fill me-1"></i> Out of Stock</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group gap-1">
+                                {% if book.available > 0 %}
+                                <a href="{{ url_for('issue_book', book_id=book.id) }}" class="btn btn-outline-success btn-sm rounded" title="Issue Book">
+                                    <i class="bi bi-arrow-right-circle"></i> Issue
+                                </a>
+                                {% else %}
+                                <button class="btn btn-outline-secondary btn-sm rounded" disabled title="No copies available">
+                                    <i class="bi bi-arrow-right-circle"></i> Issue
+                                </button>
+                                {% endif %}
+                                <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline-primary btn-sm rounded" title="Edit details">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form action="{{ url_for('delete_book', book_id=book.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm rounded confirm-delete" 
+                                            data-confirm-message="Are you sure you want to delete '{{ book.title }}' from the database? All transactional logs for this book will persist."
+                                            title="Delete book">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="bi bi-book fs-1 d-block mb-3 text-secondary"></i>
+                        No books matching current filters. Click "Add New Book" to insert records.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block title %}Add New Book - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 text-dark font-weight-bold">Register New Book</h1>
+    <a href="{{ url_for('books') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Catalog</a>
+</div>
+
+<div class="form-card mb-5">
+    <div class="text-center mb-4">
+        <i class="bi bi-journal-plus text-primary fs-1"></i>
+        <h4 class="mt-2 font-weight-bold">Book Details</h4>
+        <p class="text-muted small">All fields except Publisher are required</p>
+    </div>
+
+    <form action="{{ url_for('add_book') }}" method="POST" class="needs-validation" novalidate>
+        <!-- Title -->
+        <div class="mb-3">
+            <label for="title" class="form-label fw-semibold">Book Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="e.g. The Great Gatsby" required>
+            <div class="invalid-feedback">Please enter the book title.</div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <!-- Author -->
+            <div class="col-12 col-sm-6">
+                <label for="author" class="form-label fw-semibold">Author Name</label>
+                <input type="text" class="form-control" id="author" name="author" placeholder="e.g. F. Scott Fitzgerald" required>
+                <div class="invalid-feedback">Please enter the author name.</div>
+            </div>
+            <!-- Category -->
+            <div class="col-12 col-sm-6">
+                <label for="category" class="form-label fw-semibold">Category</label>
+                <input type="text" class="form-control" id="category" name="category" placeholder="e.g. Fiction, Science, History" required>
+                <div class="invalid-feedback">Please specify the category.</div>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <!-- ISBN -->
+            <div class="col-12 col-sm-6">
+                <label for="isbn" class="form-label fw-semibold">ISBN Code</label>
+                <input type="text" class="form-control" id="isbn" name="isbn" placeholder="e.g. 9780743273565" required>
+                <div class="invalid-feedback">Please enter a valid ISBN code.</div>
+            </div>
+            <!-- Publisher -->
+            <div class="col-12 col-sm-6">
+                <label for="publisher" class="form-label fw-semibold">Publisher</label>
+                <input type="text" class="form-control" id="publisher" name="publisher" placeholder="e.g. Scribner">
+            </div>
+        </div>
+
+        <!-- Quantity -->
+        <div class="mb-4">
+            <label for="quantity" class="form-label fw-semibold">Total Stock Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1" required>
+            <div class="invalid-feedback">Stock quantity must be at least 1.</div>
+            <div class="form-text text-muted">The initial available copies will match this stock quantity.</div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-primary-custom w-100 py-2.5">
+                <i class="bi bi-check-lg me-1"></i> Register Book
+            </button>
+            <a href="{{ url_for('books') }}" class="btn btn-light border w-100 py-2.5">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Enable Bootstrap Form Validation
+    (() => {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}

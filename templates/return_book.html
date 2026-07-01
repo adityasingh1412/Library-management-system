@@ -1,0 +1,130 @@
+{% extends 'layout.html' %}
+
+{% block title %}Return Issued Books - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 text-dark font-weight-bold">Return Borrowed Books</h1>
+    <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+</div>
+
+<!-- Active Transactions list -->
+<div class="custom-table-container">
+    <h5 class="card-title mb-3 font-weight-bold text-dark"><i class="bi bi-hourglass-split text-warning me-1"></i> Active Borrow Transactions</h5>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 80px;">Txn ID</th>
+                    <th>Member Details</th>
+                    <th>Book Details</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th class="text-center" style="width: 120px;">Overdue Status / Fine</th>
+                    <th class="text-end" style="width: 160px;">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if active_loans %}
+                    {% for loan in active_loans %}
+                    <tr>
+                        <td class="text-muted fw-semibold">#{{ loan.id }}</td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold text-dark">{{ loan.member_name }}</span>
+                                <span class="text-muted small">ID: #{{ loan.member_id }} | Phone: {{ loan.member_phone }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-semibold text-dark">{{ loan.book_title }}</span>
+                                <span class="text-muted small">by {{ loan.book_author }} | ISBN: {{ loan.isbn }}</span>
+                            </div>
+                        </td>
+                        <td>{{ loan.issue_date }}</td>
+                        <td>{{ loan.due_date }}</td>
+                        <td class="text-center">
+                            {% if loan.days_overdue > 0 %}
+                            <div class="d-flex flex-column align-items-center">
+                                <span class="badge bg-danger mb-1"><i class="bi bi-exclamation-triangle-fill"></i> {{ loan.days_overdue }} Days Late</span>
+                                <span class="fw-bold text-danger">${{ "%.2f" | format(loan.fine) }} Fine</span>
+                            </div>
+                            {% else %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> On Time</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <form action="{{ url_for('return_book_action', loan_id=loan.id) }}" method="POST">
+                                <button type="submit" class="btn btn-outline-info btn-sm rounded-pill px-3 fw-medium">
+                                    <i class="bi bi-arrow-left-circle me-1"></i> Return Book
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="bi bi-check-circle fs-1 d-block mb-3 text-success"></i>
+                        All books are currently returned! No active issues found.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- History Transactions list -->
+<div class="custom-table-container mt-4">
+    <h5 class="card-title mb-3 font-weight-bold text-dark"><i class="bi bi-clock-history text-muted me-1"></i> Return History (Last 10 Transactions)</h5>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Txn ID</th>
+                    <th>Member</th>
+                    <th>Book Title</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if returned_loans %}
+                    {% for loan in returned_loans %}
+                    <tr>
+                        <td class="text-muted fw-semibold">#{{ loan.id }}</td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-bold text-dark">{{ loan.member_name }}</span>
+                                <span class="text-muted small">{{ loan.member_phone }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="fw-semibold text-dark">{{ loan.book_title }}</span>
+                                <span class="text-muted small">ISBN: {{ loan.isbn }}</span>
+                            </div>
+                        </td>
+                        <td>{{ loan.issue_date }}</td>
+                        <td>{{ loan.due_date }}</td>
+                        <td>{{ loan.return_date }}</td>
+                        <td>
+                            <span class="badge bg-success"><i class="bi bi-check-circle-fill"></i> Returned</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-4 text-muted">
+                        No transaction history available.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

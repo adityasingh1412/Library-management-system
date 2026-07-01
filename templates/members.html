@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+
+{% block title %}Manage Members - Library Management System{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2 text-dark font-weight-bold">Library Members</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{{ url_for('add_member') }}" class="btn btn-primary btn-primary-custom shadow-sm">
+            <i class="bi bi-person-plus me-1"></i> Register Member
+        </a>
+    </div>
+</div>
+
+<!-- Search Bar -->
+<div class="custom-table-container mb-4">
+    <form method="GET" action="{{ url_for('members') }}" class="row g-3">
+        <div class="col-12 col-md-9">
+            <div class="input-group">
+                <span class="input-group-text bg-light"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" name="search" placeholder="Search members by name, email, or phone number..." value="{{ search_query or '' }}">
+            </div>
+        </div>
+        <div class="col-12 col-md-3 d-flex gap-2">
+            <button type="submit" class="btn btn-primary btn-primary-custom w-100"><i class="bi bi-funnel"></i> Search</button>
+            <a href="{{ url_for('members') }}" class="btn btn-outline-secondary w-100">Clear</a>
+        </div>
+    </form>
+</div>
+
+<!-- Members Table -->
+<div class="custom-table-container">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th style="width: 100px;">Member ID</th>
+                    <th>Full Name</th>
+                    <th>Email Address</th>
+                    <th>Phone Number</th>
+                    <th class="text-center" style="width: 150px;">Active Loans</th>
+                    <th class="text-end" style="width: 150px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if members %}
+                    {% for mb in members %}
+                    <tr>
+                        <td class="text-muted fw-semibold">#{{ mb.id }}</td>
+                        <td><span class="fw-bold text-dark fs-6">{{ mb.name }}</span></td>
+                        <td>{{ mb.email or '-' }}</td>
+                        <td>{{ mb.phone or '-' }}</td>
+                        <td class="text-center">
+                            {% if mb.active_loans > 0 %}
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fw-semibold">{{ mb.active_loans }} Books Borrowed</span>
+                            {% else %}
+                            <span class="badge bg-light text-muted border px-3 py-2 rounded-pill">None</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <form action="{{ url_for('delete_member', member_id=mb.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm rounded confirm-delete"
+                                        data-confirm-message="Are you sure you want to delete member '{{ mb.name }}'? All historical borrow logs for this member will persist, but you cannot issue new books to them."
+                                        {% if mb.active_loans > 0 %}disabled title="Cannot delete member with active borrow logs."{% endif %}>
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="bi bi-people fs-1 d-block mb-3 text-secondary"></i>
+                        No library members registered yet. Click "Register Member" to add one.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
